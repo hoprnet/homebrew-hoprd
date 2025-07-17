@@ -46,7 +46,9 @@ jobs:
             base_branch=${base_branch/release\//} # Remove 'release/' prefix
             formula_template="Templates/hoprd-template-${base_branch}.rb"
             formula_file="Formula/hoprd@${{ steps.vars.outputs.hoprd_version }}.rb"
+            mkdir -p Formula
             cp ${formula_template} ${formula_file}
+            ls -al Formula
             HOPRD_VERSION="${{ steps.vars.outputs.hoprd_version }}"
             HOPRD_AARCH64_SHA=$(sed 's/ hoprd//' dist/hoprd-aarch64-darwin.sha256 | tr -d ' ')
             HOPRD_X86_64_SHA=$(sed 's/ hoprd//' dist/hoprd-x86_64-darwin.sha256 | tr -d ' ')
