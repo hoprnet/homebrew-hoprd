@@ -46,7 +46,6 @@ jobs:
             base_branch=${base_branch/release\//} # Remove 'release/' prefix
             formula_template="Templates/hoprd-template-${base_branch}.rb"
             formula_file="Formula/hoprd@${{ steps.vars.outputs.hoprd_version }}.rb"
-            mkdir -p Formula
             cp ${formula_template} ${formula_file}
             ls -al Formula
             HOPRD_VERSION="${{ steps.vars.outputs.hoprd_version }}"
@@ -54,7 +53,7 @@ jobs:
             HOPRD_X86_64_SHA=$(sed 's/ hoprd//' dist/hoprd-x86_64-darwin.sha256 | tr -d ' ')
             HOPLI_AARCH64_SHA=$(sed 's/ hopli//' dist/hopli-aarch64-darwin.sha256 | tr -d ' ')
             HOPLI_X86_64_SHA=$(sed 's/ hopli//' dist/hopli-x86_64-darwin.sha256 | tr -d ' ')
-            sed -i '' \
+            sed -i 'hoprd-formula.bak' \
               -e "s/HOPRD_VERSION_PLACEHOLDER/${HOPRD_VERSION}/" \
               -e "s/HOPRD_AARCH64_SHA256_PLACEHOLDER/${HOPRD_AARCH64_SHA}/" \
               -e "s/HOPRD_X86_64_SHA256_PLACEHOLDER/${HOPRD_X86_64_SHA}/" \
@@ -62,7 +61,7 @@ jobs:
               -e "s/HOPLI_X86_64_SHA256_PLACEHOLDER/${HOPLI_X86_64_SHA}/" \
               "${formula_file}"
              git add "${formula_file}"
-            rm -rf dist
+            rm -rf dist hoprd-formula.bak
         env:
           GH_TOKEN: ${{ github.token }}
 
