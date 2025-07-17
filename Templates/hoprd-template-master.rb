@@ -1,44 +1,41 @@
-class Hoprd < Formula
+class FORMULA_CLASS_NAME_PLACEHOLDER < Formula
   desc "HOPR Node"
   homepage "https://hoprnet.org"
   version "HOPRD_VERSION_PLACEHOLDER"
 
   on_macos do
     on_arm do
-      url "https://github.com/hoprnet/hoprnet/releases/download/v#{version}/hoprd-aarch64-darwin"
+      url "https://github.com/hoprnet/hoprnet/releases/download/vHOPRD_VERSION_PLACEHOLDER/hoprd-aarch64-darwin"
       sha256 "HOPRD_AARCH64_SHA256_PLACEHOLDER"
-      gpg "https://github.com/hoprnet/hoprnet/releases/download/v#{version}/hoprd-aarch64-darwin.sig",
-          key_id: "6DBF33477100C3DC",
-          keyserver: "https://keyserver.ubuntu.com"
     end
 
     on_intel do
-      url "https://github.com/hoprnet/hoprnet/releases/download/v#{version}/hoprd-x86_64-darwin"
+      url "https://github.com/hoprnet/hoprnet/releases/download/vHOPRD_VERSION_PLACEHOLDER/hoprd-x86_64-darwin"
       sha256 "HOPRD_X86_64_SHA256_PLACEHOLDER"
-      gpg "https://github.com/hoprnet/hoprnet/releases/download/v#{version}/hoprd-x86_64-darwin.sig",
-          key_id: "6DBF33477100C3DC",
-          keyserver: "https://keyserver.ubuntu.com"
     end
   end
 
   resource "hopli" do
     on_macos do
       on_arm do
-        url "https://github.com/hoprnet/hoprnet/releases/download/v#{version}/hopli-aarch64-darwin"
+        url "https://github.com/hoprnet/hoprnet/releases/download/vHOPRD_VERSION_PLACEHOLDER/hopli-aarch64-darwin"
         sha256 "HOPLI_AARCH64_SHA256_PLACEHOLDER"
-        gpg "https://github.com/hoprnet/hoprnet/releases/download/v#{version}/hopli-aarch64-darwin.sig",
-            key_id: "6DBF33477100C3DC",
-            keyserver: "https://keyserver.ubuntu.com"
       end
 
       on_intel do
-        url "https://github.com/hoprnet/hoprnet/releases/download/v#{version}/hopli-x86_64-darwin"
+        url "https://github.com/hoprnet/hoprnet/releases/download/vHOPRD_VERSION_PLACEHOLDER/hopli-x86_64-darwin"
         sha256 "HOPLI_X86_64_SHA256_PLACEHOLDER"
-        gpg "https://github.com/hoprnet/hoprnet/releases/download/v#{version}/hopli-x86_64-darwin.sig",
-            key_id: "6DBF33477100C3DC",
-            keyserver: "https://keyserver.ubuntu.com"
       end
     end
+  end
+
+  # Block installation without version
+  pour_bottle? do
+    reason <<~EOS
+      This formula requires explicit version specification.
+      Use `brew install hoprd@<version>` instead.
+    EOS
+    satisfy { false }
   end
 
   depends_on "logrotate"
