@@ -1,12 +1,12 @@
 class Hoprd < Formula
   desc "HOPR Node"
   homepage "https://hoprnet.org"
-  version "REPLACE_WITH_VERSION"
+  version "HOPRD_VERSION_PLACEHOLDER"
 
   on_macos do
     on_arm do
       url "https://github.com/hoprnet/hoprnet/releases/download/v#{version}/hoprd-aarch64-darwin"
-      sha256 "REPLACE_WITH_SHA256_HOPRD_AARCH64_DARWIN"
+      sha256 "HOPRD_AARCH64_SHA256_PLACEHOLDER"
       gpg "https://github.com/hoprnet/hoprnet/releases/download/v#{version}/hoprd-aarch64-darwin.sig",
           key_id: "6DBF33477100C3DC",
           keyserver: "https://keyserver.ubuntu.com"
@@ -14,7 +14,7 @@ class Hoprd < Formula
 
     on_intel do
       url "https://github.com/hoprnet/hoprnet/releases/download/v#{version}/hoprd-x86_64-darwin"
-      sha256 "REPLACE_WITH_SHA256_HOPRD_X86_64_DARWIN"
+      sha256 "HOPRD_X86_64_SHA256_PLACEHOLDER"
       gpg "https://github.com/hoprnet/hoprnet/releases/download/v#{version}/hoprd-x86_64-darwin.sig",
           key_id: "6DBF33477100C3DC",
           keyserver: "https://keyserver.ubuntu.com"
@@ -25,7 +25,7 @@ class Hoprd < Formula
     on_macos do
       on_arm do
         url "https://github.com/hoprnet/hoprnet/releases/download/v#{version}/hopli-aarch64-darwin"
-        sha256 "REPLACE_WITH_SHA256_HOPLI_AARCH64_DARWIN"
+        sha256 "HOPLI_AARCH64_SHA256_PLACEHOLDER"
         gpg "https://github.com/hoprnet/hoprnet/releases/download/v#{version}/hopli-aarch64-darwin.sig",
             key_id: "6DBF33477100C3DC",
             keyserver: "https://keyserver.ubuntu.com"
@@ -33,7 +33,7 @@ class Hoprd < Formula
 
       on_intel do
         url "https://github.com/hoprnet/hoprnet/releases/download/v#{version}/hopli-x86_64-darwin"
-        sha256 "REPLACE_WITH_SHA256_HOPLI_X86_64_DARWIN"
+        sha256 "HOPLI_X86_64_SHA256_PLACEHOLDER"
         gpg "https://github.com/hoprnet/hoprnet/releases/download/v#{version}/hopli-x86_64-darwin.sig",
             key_id: "6DBF33477100C3DC",
             keyserver: "https://keyserver.ubuntu.com"
