@@ -322,9 +322,9 @@ class FORMULA_CLASS_NAME_PLACEHOLDER < Formula
   end
 
   def is_valid_ethereum_address?(address)
-    isInvalid = address.nil? || address.empty? || address == "0x0000000000000000000000000000000000000000"
-    isValid = address.match?(/\A0x[a-fA-F0-9]{40}\z/)
-    return isValid && !isInvalid
+    is_invalid = address.nil? || address.empty? || address == "0x0000000000000000000000000000000000000000"
+    is_valid = address.match?(/\A0x[a-fA-F0-9]{40}\z/)
+    return is_valid && !is_invalid
     rescue StandardError
       false
   end
