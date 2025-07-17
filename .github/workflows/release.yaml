@@ -1,0 +1,81 @@
+name: Create Release
+
+on:
+  repository_dispatch:
+    types: [create_release]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version of the release'
+        required: true
+        default: '0.0.0'
+      base_branch:
+        description: 'Formula template base branch'
+        required: true
+        default: 'master'
+
+jobs:
+  create_release:
+    name: Create Release
+    runs-on: self-hosted-hoprnet-small
+    steps:
+
+      - name: Setup environment variables
+        id: vars
+        run: |
+            set -x
+            if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+              echo "Triggered by workflow_dispatch"
+              echo "hoprd_version=${{ inputs.version }}" | tee -a $GITHUB_OUTPUT
+              echo "base_branch=${{ inputs.base_branch }}" | tee -a $GITHUB_OUTPUT
+            else
+              echo "Triggered by repository_dispatch"
+              echo "hoprd_version=${{ github.event.client_payload.version }}" | tee -a $GITHUB_OUTPUT
+              echo "base_branch=${{ github.event.client_payload.base_branch }}" | tee -a $GITHUB_OUTPUT
+            fi
+      - name: Checkout tap repo
+        uses: actions/checkout@v3
+
+      - name: Update Formula
+        run: |
+            set -x
+            echo "Updating hoprd.rb formula for version ${{ steps.vars.outputs.hoprd_version }}"
+            mkdir -p dist
+            gh release download --repo hoprnet/hoprnet v${{ steps.vars.outputs.hoprd_version }} --dir dist/
+            base_branch="${{ steps.vars.outputs.base_branch }}"
+            base_branch=${base_branch/release\//} # Remove 'release/' prefix
+            formula_template="Templates/hoprd-template-${base_branch}.rb"
+            formula_file="Formula/hoprd@${{ steps.vars.outputs.hoprd_version }}.rb"
+            cp ${formula_template} ${formula_file}
+            HOPRD_VERSION="${{ steps.vars.outputs.hoprd_version }}"
+            HOPRD_TRIMMED_VERSION=$(echo "${HOPRD_VERSION}" | tr -d '.' | tr -d '-' | tr '[:lower:]' '[:upper:]')
+            HOPRD_TRIMMED_VERSION=${HOPRD_TRIMMED_VERSION//RC/Rc}
+            HOPRD_AARCH64_SHA=$(sed 's/ hoprd//' dist/hoprd-aarch64-darwin.sha256 | tr -d ' ')
+            HOPRD_X86_64_SHA=$(sed 's/ hoprd//' dist/hoprd-x86_64-darwin.sha256 | tr -d ' ')
+            HOPLI_AARCH64_SHA=$(sed 's/ hopli//' dist/hopli-aarch64-darwin.sha256 | tr -d ' ')
+            HOPLI_X86_64_SHA=$(sed 's/ hopli//' dist/hopli-x86_64-darwin.sha256 | tr -d ' ')
+            sed -i'.bak' \
+              -e "s/FORMULA_CLASS_NAME_PLACEHOLDER/HoprdAT${HOPRD_TRIMMED_VERSION}/" \
+              -e "s/HOPRD_VERSION_PLACEHOLDER/${HOPRD_VERSION}/g" \
+              -e "s/HOPRD_AARCH64_SHA256_PLACEHOLDER/${HOPRD_AARCH64_SHA}/" \
+              -e "s/HOPRD_X86_64_SHA256_PLACEHOLDER/${HOPRD_X86_64_SHA}/" \
+              -e "s/HOPLI_AARCH64_SHA256_PLACEHOLDER/${HOPLI_AARCH64_SHA}/" \
+              -e "s/HOPLI_X86_64_SHA256_PLACEHOLDER/${HOPLI_X86_64_SHA}/" \
+              "${formula_file}"
+             git add "${formula_file}"
+            rm -rf dist "${formula_file}.bak"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
+        with:
+          token: ${{ secrets.GH_RUNNER_TOKEN }}
+          commit-message: 'Update version ${{ steps.vars.outputs.hoprd_version }}'
+          title: 'Publish version ${{ steps.vars.outputs.hoprd_version }}'
+          body: |
+            This PR adds to homebrew version ${{ steps.vars.outputs.hoprd_version }}.
+          branch: bot/update-${{ steps.vars.outputs.hoprd_version }}
+          delete-branch: true
+          assignees: ${{ github.actor }}
+          team-reviewers: "@hoprnet/hopr-development"
