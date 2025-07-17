@@ -45,18 +45,19 @@ jobs:
             base_branch="${{ steps.vars.outputs.base_branch }}"
             base_branch=${base_branch/release\//} # Remove 'release/' prefix
             formula_template="Templates/hoprd-template-${base_branch}.rb"
-            formula_file="Formula/hoprd.rb@${{ steps.vars.outputs.hoprd_version }}.rb"
+            formula_file="Formula/hoprd@${{ steps.vars.outputs.hoprd_version }}.rb"
             cp ${formula_template} ${formula_file}
             HOPRD_VERSION="${{ steps.vars.outputs.hoprd_version }}"
-            HOPRD_AARCH64_SHA=$(sed 's/ hoprd//' dist/hoprd-aarch64-darwin.sha256)
-            HOPRD_X86_64_SHA=$(sed 's/ hoprd//' dist/hoprd-x86_64-darwin.sha256)
-            HOPLI_AARCH64_SHA=$(sed 's/ hopli//' dist/hopli-aarch64-darwin.sha256)
-            HOPLI_X86_64_SHA=$(sed 's/ hopli//' dist/hopli-x86_64-darwin.sha256)
-            sed -i '' -e "s/HOPRD_VERSION_PLACEHOLDER/$HOPRD_VERSION/" \
-              -e "s/HOPRD_AARCH64_SHA256_PLACEHOLDER/$HOPRD_AARCH64_SHA/" \
-              -e "s/HOPRD_X86_64_SHA256_PLACEHOLDER/$HOPRD_X86_64_SHA/" \
-              -e "s/HOPLI_AARCH64_SHA256_PLACEHOLDER/$HOPLI_AARCH64_SHA/" \
-              -e "s/HOPLI_X86_64_SHA256_PLACEHOLDER/$HOPLI_X86_64_SHA/" \
+            HOPRD_AARCH64_SHA=$(sed 's/ hoprd//' dist/hoprd-aarch64-darwin.sha256 | tr -d ' ')
+            HOPRD_X86_64_SHA=$(sed 's/ hoprd//' dist/hoprd-x86_64-darwin.sha256 | tr -d ' ')
+            HOPLI_AARCH64_SHA=$(sed 's/ hopli//' dist/hopli-aarch64-darwin.sha256 | tr -d ' ')
+            HOPLI_X86_64_SHA=$(sed 's/ hopli//' dist/hopli-x86_64-darwin.sha256 | tr -d ' ')
+            sed -i '' \
+              -e "s/HOPRD_VERSION_PLACEHOLDER/${HOPRD_VERSION}/" \
+              -e "s/HOPRD_AARCH64_SHA256_PLACEHOLDER/${HOPRD_AARCH64_SHA}/" \
+              -e "s/HOPRD_X86_64_SHA256_PLACEHOLDER/${HOPRD_X86_64_SHA}/" \
+              -e "s/HOPLI_AARCH64_SHA256_PLACEHOLDER/${HOPLI_AARCH64_SHA}/" \
+              -e "s/HOPLI_X86_64_SHA256_PLACEHOLDER/${HOPLI_X86_64_SHA}/" \
               "${formula_file}"
              git add "${formula_file}"
             rm -rf dist
