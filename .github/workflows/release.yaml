@@ -60,7 +60,7 @@ jobs:
               -e "s/HOPLI_X86_64_SHA256_PLACEHOLDER/${HOPLI_X86_64_SHA}/" \
               "${formula_file}"
              git add "${formula_file}"
-            rm -rf dist hoprd-formula.bak
+            rm -rf dist "${formula_file}.bak"
         env:
           GH_TOKEN: ${{ github.token }}
 
