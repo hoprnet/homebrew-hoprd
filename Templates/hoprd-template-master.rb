@@ -397,8 +397,7 @@ class FORMULA_CLASS_NAME_PLACEHOLDER < Formula
         Next Steps:
             - Edit file #{etc}/hoprd/hoprd.env to set the appropiate environment variables.
             - Edit file #{etc}/hoprd/hoprd.cfg.yaml to customize your node settings.
-            - Register your node address at: https://hub.hoprnet.org
-            - Add funds to your node address: #{node_address}
+            - Register and complete the onboarding at: https://hub.hoprnet.org
             - Start the service: brew services start hoprd
         Note: Your API token and password are stored in #{etc}/hoprd/hoprd.env (Keep this file secure!)
     EOS
