@@ -381,9 +381,10 @@ class FORMULA_CLASS_NAME_PLACEHOLDER < Formula
         ----------------------------------------------------------------------------------------------------
       EOS
     end
+    host_only = config["HOPRD_HOST"].split(":").first
     ohai "Generated HOPR configuration:"
     puts <<~EOS
-        API Endpoint:       http://#{config["HOPRD_HOST"]}:#{config["HOPRD_API_PORT"]} or http://localhost:#{config["HOPRD_API_PORT"]}
+        API Endpoint:       http://#{host_only}:#{config["HOPRD_API_PORT"]} or http://localhost:#{config["HOPRD_API_PORT"]}
         Safe Address:       #{config["HOPRD_SAFE_ADDRESS"]}
         Module Address:     #{config["HOPRD_MODULE_ADDRESS"]}
         Node Address:       #{node_address}
