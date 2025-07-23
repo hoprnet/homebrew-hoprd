@@ -50,10 +50,10 @@ jobs:
             HOPRD_VERSION="${{ steps.vars.outputs.hoprd_version }}"
             HOPRD_TRIMMED_VERSION=$(echo "${HOPRD_VERSION}" | tr -d '.' | tr -d '-' | tr '[:lower:]' '[:upper:]')
             HOPRD_TRIMMED_VERSION=${HOPRD_TRIMMED_VERSION//RC/Rc}
-            HOPRD_AARCH64_SHA=$(sed 's/ hoprd//' dist/hoprd-aarch64-darwin.sha256 | tr -d ' ')
-            HOPRD_X86_64_SHA=$(sed 's/ hoprd//' dist/hoprd-x86_64-darwin.sha256 | tr -d ' ')
-            HOPLI_AARCH64_SHA=$(sed 's/ hopli//' dist/hopli-aarch64-darwin.sha256 | tr -d ' ')
-            HOPLI_X86_64_SHA=$(sed 's/ hopli//' dist/hopli-x86_64-darwin.sha256 | tr -d ' ')
+            HOPRD_AARCH64_SHA=$(grep hoprd-aarch64-darwin dist/SHA256SUMS | awk '{print $1}')
+            HOPRD_X86_64_SHA=$(grep hoprd-x86_64-darwin dist/SHA256SUMS | awk '{print $1}')
+            HOPLI_AARCH64_SHA=$(grep hopli-aarch64-darwin dist/SHA256SUMS | awk '{print $1}')
+            HOPLI_X86_64_SHA=$(grep hopli-x86_64-darwin dist/SHA256SUMS | awk '{print $1}')
             sed -i'.bak' \
               -e "s/FORMULA_CLASS_NAME_PLACEHOLDER/HoprdAT${HOPRD_TRIMMED_VERSION}/" \
               -e "s/HOPRD_VERSION_PLACEHOLDER/${HOPRD_VERSION}/g" \
