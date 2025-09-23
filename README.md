@@ -5,7 +5,7 @@ Homebrew package for hoprd
 
 ```bash
 brew tap hoprnet/hoprd
-brew install hoprd@3.0.0-rc.1
+brew install hoprd@3.0.0
 
 ```
 
@@ -21,9 +21,9 @@ Those instructions are only at development time of the Formula
     url "file://#{ENV['HOME']}/Documents/github/hoprnet/dist/bin/hoprd-aarch64-darwin"
 
 ```bash
-brew install --verbose --debug ./Formula/hoprd@3.0.0-rc.1.rb
-brew reinstall --verbose --debug hoprd@3.0.0-rc.1
-brew postinstall hoprd@3.0.0-rc.1
+brew install --verbose --debug ./Formula/hoprd@3.0.0.rb
+brew reinstall --verbose --debug hoprd@3.0.0
+brew postinstall hoprd@3.0.0
 ```
 
 - Edit manually $(brew --prefix)/etc/hoprd/hoprd.env
@@ -32,7 +32,7 @@ brew postinstall hoprd@3.0.0-rc.1
 ### Uninstall
 
 ```bash
-brew uninstall --force hoprd@3.0.0-rc.1
+brew uninstall --force hoprd@3.0.0
 ```
 
 - Clear cache

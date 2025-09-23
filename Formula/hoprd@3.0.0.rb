@@ -1,30 +1,30 @@
-class HoprdAT300Rc1 < Formula
+class HoprdAT300 < Formula
   desc "HOPR Node"
   homepage "https://hoprnet.org"
-  version "3.0.0-rc.1"
+  version "3.0.0"
 
   on_macos do
     on_arm do
-      url "https://github.com/hoprnet/hoprnet/releases/download/v3.0.0-rc.1/hoprd-aarch64-darwin"
-      sha256 "94d1b440c0e0cb77d4b079d3e5e5a37421ec25838a0295d16785d89baa5f5dba"
+      url "https://github.com/hoprnet/hoprnet/releases/download/v3.0.0/hoprd-aarch64-darwin"
+      sha256 "572a4686109e4557e3af82848b049a40b0e978f85149bade447a30b92be448df"
     end
 
     on_intel do
-      url "https://github.com/hoprnet/hoprnet/releases/download/v3.0.0-rc.1/hoprd-x86_64-darwin"
-      sha256 "9f52d274bac9293965dd9e91f3b1f6e4be8a4feb2dd6ec6c2edecd7b411a1679"
+      url "https://github.com/hoprnet/hoprnet/releases/download/v3.0.0/hoprd-x86_64-darwin"
+      sha256 "fd2b0421a75893e1068a0193d13adf4d0a78378cc8770c403c2b335885e7f4d2"
     end
   end
 
   resource "hopli" do
     on_macos do
       on_arm do
-        url "https://github.com/hoprnet/hoprnet/releases/download/v3.0.0-rc.1/hopli-aarch64-darwin"
-        sha256 "23eedf1c05ae78d3f05005e8b33a69938e2af0de2a2670c7dab1e65e31007506"
+        url "https://github.com/hoprnet/hoprnet/releases/download/v3.0.0/hopli-aarch64-darwin"
+        sha256 "6b8fc38d31c52686fe5409d7fbb8ff3043b35723d96445ff559b9cd258e6cc91"
       end
 
       on_intel do
-        url "https://github.com/hoprnet/hoprnet/releases/download/v3.0.0-rc.1/hopli-x86_64-darwin"
-        sha256 "ccc8a0b5522533745cdc1a40db4eb3886f478a2640eb1d5b558efdec35c0d51b"
+        url "https://github.com/hoprnet/hoprnet/releases/download/v3.0.0/hopli-x86_64-darwin"
+        sha256 "a305412c761e830f010661917113ab293104b393aeed0c34dc39402e2215f763"
       end
     end
   end
@@ -381,9 +381,10 @@ class HoprdAT300Rc1 < Formula
         ----------------------------------------------------------------------------------------------------
       EOS
     end
+    host_only = config["HOPRD_HOST"].split(":").first
     ohai "Generated HOPR configuration:"
     puts <<~EOS
-        API Endpoint:       http://#{config["HOPRD_HOST"]}:#{config["HOPRD_API_PORT"]} or http://localhost:#{config["HOPRD_API_PORT"]}
+        API Endpoint:       http://#{host_only}:#{config["HOPRD_API_PORT"]} or http://localhost:#{config["HOPRD_API_PORT"]}
         Safe Address:       #{config["HOPRD_SAFE_ADDRESS"]}
         Module Address:     #{config["HOPRD_MODULE_ADDRESS"]}
         Node Address:       #{node_address}
@@ -396,8 +397,7 @@ class HoprdAT300Rc1 < Formula
         Next Steps:
             - Edit file #{etc}/hoprd/hoprd.env to set the appropiate environment variables.
             - Edit file #{etc}/hoprd/hoprd.cfg.yaml to customize your node settings.
-            - Register your node address at: https://hub.hoprnet.org
-            - Add funds to your node address: #{node_address}
+            - Register and complete the onboarding at: https://hub.hoprnet.org
             - Start the service: brew services start hoprd
         Note: Your API token and password are stored in #{etc}/hoprd/hoprd.env (Keep this file secure!)
     EOS
