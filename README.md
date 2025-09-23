@@ -6,6 +6,7 @@ Homebrew package for hoprd
 ```bash
 brew tap hoprnet/hoprd
 brew install hoprd@3.0.0
+brew services stop hoprnet/hoprd/hoprd@3.0.0
 
 ```
 
