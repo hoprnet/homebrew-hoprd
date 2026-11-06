@@ -42,6 +42,7 @@ jobs:
               echo "Invalid version or base_branch" >&2
               exit 1
             fi
+            version="${version#v}" # the download step adds the v prefix
             echo "hoprd_version=${version}" | tee -a "$GITHUB_OUTPUT"
             echo "base_branch=${base_branch}" | tee -a "$GITHUB_OUTPUT"
         env:
