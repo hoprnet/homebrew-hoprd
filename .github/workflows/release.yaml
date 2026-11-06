@@ -14,40 +14,58 @@ on:
         required: true
         default: 'master'
 
+permissions: {}
+
 jobs:
   create_release:
     name: Create Release
     runs-on: depot-ubuntu-24.04
+    permissions:
+      contents: read
     steps:
 
       - name: Setup environment variables
         id: vars
         run: |
             set -x
-            if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            if [ "$EVENT_NAME" == "workflow_dispatch" ]; then
               echo "Triggered by workflow_dispatch"
-              echo "hoprd_version=${{ inputs.version }}" | tee -a $GITHUB_OUTPUT
-              echo "base_branch=${{ inputs.base_branch }}" | tee -a $GITHUB_OUTPUT
+              version="$INPUT_VERSION"
+              base_branch="$INPUT_BASE_BRANCH"
             else
               echo "Triggered by repository_dispatch"
-              echo "hoprd_version=${{ github.event.client_payload.version }}" | tee -a $GITHUB_OUTPUT
-              echo "base_branch=${{ github.event.client_payload.base_branch }}" | tee -a $GITHUB_OUTPUT
+              version="$PAYLOAD_VERSION"
+              base_branch="$PAYLOAD_BASE_BRANCH"
             fi
+            # base_branch may carry a 'release/' prefix; validate the remainder
+            if [[ ! "$version" =~ ^v?[0-9A-Za-z._-]+$ ]] || [[ ! "${base_branch#release/}" =~ ^v?[0-9A-Za-z._-]+$ ]]; then
+              echo "Invalid version or base_branch" >&2
+              exit 1
+            fi
+            version="${version#v}" # the download step adds the v prefix
+            echo "hoprd_version=${version}" | tee -a "$GITHUB_OUTPUT"
+            echo "base_branch=${base_branch}" | tee -a "$GITHUB_OUTPUT"
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_BASE_BRANCH: ${{ inputs.base_branch }}
+          PAYLOAD_VERSION: ${{ github.event.client_payload.version }}
+          PAYLOAD_BASE_BRANCH: ${{ github.event.client_payload.base_branch }}
+
       - name: Checkout tap repo
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
 
       - name: Update Formula
         run: |
             set -x
-            echo "Updating hoprd.rb formula for version ${{ steps.vars.outputs.hoprd_version }}"
+            echo "Updating hoprd.rb formula for version ${HOPRD_VERSION}"
             mkdir -p dist
-            gh release download --repo hoprnet/hoprnet v${{ steps.vars.outputs.hoprd_version }} --dir dist/
-            base_branch="${{ steps.vars.outputs.base_branch }}"
+            gh release download --repo hoprnet/hoprnet "v${HOPRD_VERSION}" --dir dist/
+            base_branch="$BASE_BRANCH"
             base_branch=${base_branch/release\//} # Remove 'release/' prefix
             formula_template="Templates/hoprd-template-${base_branch}.rb"
-            formula_file="Formula/hoprd@${{ steps.vars.outputs.hoprd_version }}.rb"
+            formula_file="Formula/hoprd@${HOPRD_VERSION}.rb"
             cp ${formula_template} ${formula_file}
-            HOPRD_VERSION="${{ steps.vars.outputs.hoprd_version }}"
             HOPRD_TRIMMED_VERSION=$(echo "${HOPRD_VERSION}" | tr -d '.' | tr -d '-' | tr '[:lower:]' '[:upper:]')
             HOPRD_TRIMMED_VERSION=${HOPRD_TRIMMED_VERSION//RC/Rc}
             HOPRD_AARCH64_SHA=$(grep hoprd-aarch64-darwin dist/SHA256SUMS | awk '{print $1}')
@@ -65,6 +83,8 @@ jobs:
              git add "${formula_file}"
             rm -rf dist "${formula_file}.bak"
         env:
+          HOPRD_VERSION: ${{ steps.vars.outputs.hoprd_version }}
+          BASE_BRANCH: ${{ steps.vars.outputs.base_branch }}
           GH_TOKEN: ${{ github.token }}
 
       - name: Create Pull Request
